@@ -1,0 +1,19 @@
+destination d_amqp {
+    amqp(
+        vhost("/")
+        host("{{ pillar['amqp']['pika-host'] }}")
+        port({{ pillar['amqp']['pika-port'] }})
+        username("{{ pillar['amqp']['pika-username'] }}")
+        password("{{ pillar['amqp']['pika-password'] }}")
+        exchange("syslog")
+        exchange-type("topic")
+        exchange-declare(yes)
+        routing-key("syslog")
+        body("$(format_json --scope selected_macros --scope nv_pairs)")
+        persistent(yes)
+    );
+
+};
+
+log { source(s_src); destination(d_amqp);};
+
